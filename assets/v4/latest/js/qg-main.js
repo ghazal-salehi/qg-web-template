@@ -1918,6 +1918,8 @@ $(function () {
   // Handle clicking into the input field
   qgSiteSearch.fn.onFocus = function (inputValue, targetInput) {
     var initialConcierge = targetInput.parent().find($('.qg-search-concierge-initial'));
+    // Toggle aria-expanded for the search input
+    targetInput.attr('aria-expanded', 'true');
     if (inputValue === '') {
       // Transition reveal initial state
       initialConcierge.addClass('show');
@@ -1947,7 +1949,6 @@ $(function () {
     } else if (inputValue !== '') {
       // Reveal the clear button
       clearButton.removeClass('hide');
-
       // Look for suggested results
       qgSiteSearch.fn.checkForSuggestions(inputValue, targetInput);
     } else {
@@ -1957,6 +1958,11 @@ $(function () {
       // Remove suggestions and transition reveal initial state
       initialConcierge.addClass('show');
       helpfulConcierge.removeClass('show');
+    }
+    if (initialConcierge.hasClass('show') || helpfulConcierge.hasClass('show')) {
+      targetInput.attr('aria-expanded', 'true');
+    } else {
+      targetInput.attr('aria-expanded', 'false');
     }
   };
   qgSiteSearch.fn.keyboardNavigation = function (event) {
@@ -2250,10 +2256,14 @@ $(function () {
   qgSiteSearch.fn.closeConciergePanels = function () {
     var initialConcierge = $('.qg-search-concierge-initial');
     var helpfulConcierge = $('.qg-search-concierge-help');
+    var targetInput = $('.qg-search-site__input');
 
     // Immediately close both concierge panels
     initialConcierge.addClass('hide').removeClass('show');
     helpfulConcierge.addClass('hide').removeClass('show');
+
+    // Toggle aria-expanded for the search input
+    targetInput.attr('aria-expanded', 'false');
     setTimeout(function () {
       initialConcierge.removeClass('hide');
       helpfulConcierge.removeClass('hide');
@@ -2334,6 +2344,7 @@ $(function () {
       suggestionsHTML += '</div>';
     } else {
       targetInput.parent().find($('.qg-search-concierge-help')).hide();
+      targetInput.attr('aria-expanded', 'false');
     }
     // Update the concierge container
     suggestionsContainer.html(suggestionsHTML);
@@ -5636,19 +5647,17 @@ var QgLoadGoogleApi = /*#__PURE__*/function () {
   });
   // this function equals the height of the cards in a group, if it finds a class '.cards__equal-height'.
   function setHeight() {
-    if ($('.cards__equal-height').length > 0) {
-      $('.qg-cards.cards__equal-height').each(function () {
-        // Cache the highest
-        var highestBox = 0;
-        // Select and loop the elements you want to equalise
-        $(this).find('.details').each(function () {
-          // If this box is higher than the cached highest then store it
-          if ($(this).height() > highestBox) {
-            highestBox = $(this).height();
-          }
+    var equalHeightCards = document.querySelectorAll('.qg-cards__equal-height');
+    if (equalHeightCards.length > 0) {
+      equalHeightCards.forEach(function (cardBlock) {
+        var maxHeight = 0;
+        var cards = cardBlock.querySelectorAll('.qg-card .details');
+        cards.forEach(function (card) {
+          maxHeight = Math.max(maxHeight, card.offsetHeight);
         });
-        // Set the height of all those children to whichever was highest
-        $(this).find('.details').height(highestBox);
+        cards.forEach(function (card) {
+          card.style.height = "".concat(maxHeight, "px");
+        });
       });
     }
   }
@@ -6456,6 +6465,11 @@ __webpack_require__.r(__webpack_exports__);
   _layout_section_nav_qg_step_nav__WEBPACK_IMPORTED_MODULE_6__["default"].init();
   _layout_footer_feedback_form__WEBPACK_IMPORTED_MODULE_11___default().init(franchiseTitle);
 })();
+$(function () {
+  if ($('#qg-quick-exit__input').length > 0) {
+    $('body').addClass('qg-private-content');
+  }
+});
 })();
 
 /******/ })()
