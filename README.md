@@ -2,7 +2,7 @@
 
 **If you are using assets from this Repo, please send an email to qol.development@smartservice.qld.gov.au so we can add you to our change management communications list**
 
-This template is designed to provide a template for all Franchise websites, and the underpinning technology for new Agency websites.
+This template is designed to provide a template for all Franchise websites, and the underpinning technology for new Agency websites..
 
 - [Getting started](readme/getting-started.md)
 - [Develop in Storybook](readme/develop-in-storybook.md)
